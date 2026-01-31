@@ -38,10 +38,17 @@
         <label>Desenvolvido por João Pedro Faria</label>
     </div>
     <!-- INCLUDES DOS ARQUIVOS DE FUNCOES -->
-     <script src="js/sudoku.js"></script>
-     <script src="js/funcoes_sudoku.js"></script>
+    <script>
+        var Module = {
+            locateFile: function (path) {
+                return 'wasm/' + path;
+            }
+        };
+    </script>
+    <script src="js/sudoku.js"></script>
+    <script src="js/funcoes_sudoku.js"></script>
 
-     <script>
+    <script>
     $(document).ready(function(){
         
         $(document).on("wasm_conectado",function(){
