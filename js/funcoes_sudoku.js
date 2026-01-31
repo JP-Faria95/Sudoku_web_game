@@ -2,7 +2,7 @@
 // CRIADAS NO ARQUIVO 'FUNCOES_SUDOKU_WEB.H' EM C++
 // POSTERIORMENTE EXPORTADAS PARA O WASM NO ARQUIVO 'FUNCOES_EMSCRIPTEN_SUDOKU_WEB.CPP'
 // PARA CONECTAR O C++ COM JS DESSE PROJETO
-
+var Module = Module || {};
 let iniciar_jogo;
 let celula_jogada;
 let valida_numero_original;
