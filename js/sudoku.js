@@ -600,7 +600,7 @@ function createExportWrapper(name, nargs) {
 var wasmBinaryFile;
 
 function findWasmBinary() {
-  return locateFile('sudoku.wasm');
+  return locateFile('../wasm/sudoku.wasm');
 }
 
 function getBinarySync(file) {
