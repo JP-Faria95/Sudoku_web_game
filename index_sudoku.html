@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="/2-bootstrap-3.4.1-dist/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="/3-DataTables/datatables.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="classes.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <!--<script src="../../4-js/notify.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!--<script src="/2-bootstrap-3.4.1-dist/js/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+    <title>Sudoku em C++ e Webassembly</title>
+</head>
+<body class="pagina_inicial">
+
+    <label class="container_inicial_nome">SUDOKU</label>
+    <div class="fonte_estilo container_inicial">
+        <div style="margin-top: 6px;">
+            <button type="button" class="btn btn-primary botoes_dificuldade" data-dificuldade="1">FÁCIL</button>
+            <button type="button" class="btn btn-success botoes_dificuldade" data-dificuldade="2">MÉDIO</button>
+            <button type="button" class="btn btn-danger botoes_dificuldade" data-dificuldade="3">DIFÍCIL</button>
+        </div>
+    </div>
+    <div id="div_redireciona_texto" class="div_redireciona">
+        <label id="label_redireciona" class="label_redireciona"></label>
+    </div>
+    <div id="div_redireciona_contador" class="div_redireciona">
+        <label id="label_contador" class="label_redireciona" style="margin-top: 100px!important;"></label>
+    </div>
+    <div class="div_dev_canto">
+        <label>Desenvolvido por João Pedro Faria</label>
+    </div>
+    <!-- INCLUDES DOS ARQUIVOS DE FUNCOES -->
+     <script src="sudoku.js"></script>
+     <script src="funcoes_sudoku.js"></script>
+
+     <script>
+    $(document).ready(function(){
+        
+        $(document).on("wasm_conectado",function(){
+            console.log("Wasm conectado");
+
+            // CLIQUE NO BOTÃO DE DIFICULDADES
+            $('.botoes_dificuldade').off('click').on('click',function(){
+                let dificuldade = $(this).data('dificuldade');
+                redireciona(`jogo_sudoku.html?dificuldade=${dificuldade}`);
+            });
+
+        });   
+    });
+    </script>
+</body>
+</html>

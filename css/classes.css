@@ -1,0 +1,207 @@
+.botoes_dificuldade{
+    border: 2px solid black;
+    border-radius: 10px!important;
+    font-weight: 900!important;
+    height: 25px;
+    padding: 0px 20px 0px 20px !important;
+    width: 100px!important;
+}
+
+.botao_voltar{
+    border-radius: 10px !important;
+    display: flex !important;
+    position: absolute !important;
+    top: 93% !important;
+}
+
+.celula{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-weight: bold;
+    border: 1px solid #999;
+    cursor: pointer;
+    user-select: none;
+}
+
+.celula_fixa{
+    background-color: #e0e0e0;
+    color: #000;
+    cursor: default;
+}
+
+.celula_jogador{
+    color: #000;
+    font-weight: 900;
+}
+
+.container_inicial{
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 10px;
+    display: flex;
+    height: 38px;
+    justify-content: center;
+    opacity: 90%;
+    outline: 3px solid rgb(0, 0, 0);
+    position: relative;
+    top: 360px;
+    width: 350px;
+}
+
+.container_inicial_dificuldade{
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 10px;
+    display: flex;
+    height: 38px;
+    justify-content: center;
+    opacity: 90%;
+    outline: 3px solid rgb(0, 0, 0);
+    position: relative;
+    top: 20px;
+    width: 300px;
+}
+
+.container_inicial_nome{
+    color: black;
+    font-family: Papyrus;
+    font-size: 200px;
+    font-style: italic;
+    left: 50%;
+    position: absolute;
+    top: 30%;
+    transform: translate(-50%,-50%);
+}
+
+.container_jogo_fim{
+    display: inline-block !important;
+    font-size: 150px !important;
+    text-align: center !important;
+    top: 55% !important;
+    width: 1500px !important;
+}
+
+.div_central_jogo{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    width:100%;
+}
+
+.div_dev_canto{
+    color: black;
+    font-size: 10px;
+    left: 88%;
+    position: fixed;
+    top: 98%;
+}
+
+.div_redireciona{
+    align-items: center;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    left: 50%;
+    position: absolute;
+    top:75%;
+    transform: translate(-50%,-50%);
+    width: 550px;
+}
+
+.fonte_estilo{
+    color:black;
+    font-family: Consolas;
+    font-weight: 900;    
+}
+
+html,body{
+    height: 100%;
+    margin: 0!important;
+}
+
+.input_jogada{
+    color: #000;
+    font-weight: 900;
+    text-align: center;
+    width: 40px;
+}
+
+.label_redireciona{
+    color:rgb(0, 0, 0);
+    font-family: Cursive;
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.modal-dialog{
+    align-items: center !important;
+    display: flex !important;
+    left: 52% !important;
+    margin: 0 !important;
+    position: fixed !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+.modal-body{
+    display: flex !important;
+    justify-content: center !important;
+    padding: 0px 0px 10px 0px !important;
+}
+
+.modal-content{
+    width: 239px!important;
+}
+
+.modal-header{
+    border-bottom: none;
+}
+
+.modal-header .close{
+    margin-top: -45px!important;
+}
+
+.modal-footer{
+    border-top: none;
+    display: flex !important;
+    justify-content: center !important;
+    padding: 0px 0px 10px 0px !important;
+}
+
+.modal-title{
+    font-weight: 900;
+}
+
+.p_dificuldade{
+    font-size: 30px;
+}
+
+.pagina_inicial{
+    background-image: url('fundo2.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+}
+
+.tabuleiro_grade{
+    background-color: #417D24;
+    border: 4px solid #000;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    height: 565px;
+    opacity: 90%;
+    width: 750px;
+}   
+
+.tabuleiro_grade .celula:nth-child(3n):not(:nth-child(9n)){
+    border-right: 4px solid #000;
+}
+
+.tabuleiro_grade .celula:nth-child(n+19):nth-child(-n+27),
+.tabuleiro_grade .celula:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 4px solid #000;
+}

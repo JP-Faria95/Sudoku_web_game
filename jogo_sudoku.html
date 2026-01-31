@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="/2-bootstrap-3.4.1-dist/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="/3-DataTables/datatables.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="classes.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <!--<script src="../../4-js/notify.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!--<script src="/2-bootstrap-3.4.1-dist/js/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+    <title>Sudoku em C++ e Webassembly</title>
+</head>
+<body class="pagina_inicial">
+    <div class="div_central_jogo">
+        <div class="fonte_estilo container_inicial_dificuldade">
+            <p id="p_dificuldade" class="p_dificuldade"></p>
+        </div>
+
+        <!-- TABULEIRO -->
+        <div id="div_tabuleiro">
+            <div id="tabuleiro_grade" class="tabuleiro_grade"></div>
+            <label class="container_inicial_nome" style="display:none;" id="label_jogo_finalizado">Parabéns!<br>Jogo Finalizado</label>
+        </div>
+        <button id="btn_voltar" type="button" class="btn btn-primary" style="display:none;">Início</button>
+    </div>
+
+    <!-- MODAL PARA O JOGADOR INSERIR O NUMERO -->
+    <div class="modal fade" tabindex="-1" id="modal_numero">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title"></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="input_jogada" id="input_jogada">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm" id="btn_numero">Inserir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INCLUDES DOS ARQUIVOS DE FUNCOES -->
+    <script src="sudoku.js"></script>
+    <script src="funcoes_sudoku.js"></script>
+    <script>
+        $(document).ready(function(){
+
+            // .TEXT DA DIFICULDADE
+            let parametro = new URLSearchParams(window.location.search);
+            let dificuldade = parametro.get('dificuldade');
+
+            if(dificuldade == 1){
+                $('#p_dificuldade').text('Sudoku - Fácil');
+            }
+            else if(dificuldade == 2){
+                $('#p_dificuldade').text('Sudoku - Médio');
+            }
+            else if(dificuldade == 3){
+                $('#p_dificuldade').text('Sudoku - Difícil');
+            }
+
+            // GERA O TABULEIRO DE ACORDO COM A DIFICULDADE
+            iniciar_evento_jogo(dificuldade);
+            
+            // ============
+            // || JOGADA ||
+            // ============
+
+            // CLIQUE NA CÉLULA
+            $(document).off('click','.celula').on('click','.celula',function(){
+                if($(this).hasClass('celula_fixa')){
+                    return;
+                }
+                let linha = $(this).data('linha');
+                let coluna = $(this).data('coluna');
+                let numero = $(this).text() ? $(this).text() : 0;
+                $('#btn_numero').data('linha',linha);
+                $('#btn_numero').data('coluna',coluna);
+                $('#btn_numero').data('numero',numero);
+                console.log('Linha clidado: ', linha);
+                console.log('Coluna clidado: ', coluna);
+                console.log('Número clidado: ', numero);
+                $('#modal_numero').modal('show');
+                if(numero == 0){
+                    $('.modal-title').text('Inserir Número');
+                    $('#btn_numero').text('Inserir');
+                    $('#btn_numero').data('tipo_jogada','inserir');
+                    $('#input_jogada').val('');
+                    $('#input_jogada').prop('disabled',false);
+                }
+                else{
+                    $('.modal-title').text('Deletar Número');
+                    $('#btn_numero').text('Deletar');
+                    $('#btn_numero').data('tipo_jogada','deletar');
+                    $('#input_jogada').val(numero);
+                    $('#input_jogada').prop('disabled',true);
+                }
+            });
+
+            // BLOQUEIA DIGITAR LETRAS NO CAMPO DE NÚMEROS
+            $('#input_jogada').on('input', function() {
+                $(this).val($(this).val().replace(/[^1-9]/g, ''));
+            });
+
+            // INSERIR OU DELETAR UM NÚMERO
+            $('#modal_numero').off('click','#btn_numero').on('click','#btn_numero',function(){
+                
+                if($('#btn_numero').data('tipo_jogada') == 'inserir'){
+                    if($('#input_jogada').val() > 9 || $('#input_jogada').val() < 1){
+                        $.notify("Somente números de 1 a 9 são aceitos","error");
+                        return false;
+                    } 
+                    else{
+                        if(jogada($('#btn_numero').data('linha'),$('#btn_numero').data('coluna'),$('#input_jogada').val(),$('#btn_numero').data('tipo_jogada'))){
+                            $('#modal_numero').modal('hide');
+                            $('#input_jogada').val('');
+
+                            // Após inserir um numero, verifica se o jogo terminou
+                            if(verificar_fim_jogo()){
+                                $('#tabuleiro_grade').hide();
+                                $('#label_jogo_finalizado').addClass('container_jogo_fim');
+                                $('#btn_voltar').addClass('botao_voltar');
+                            }
+                        }
+                    }
+                }
+
+                else if($('#btn_numero').data('tipo_jogada') == 'deletar'){
+                    if(jogada($('#btn_numero').data('linha'),$('#btn_numero').data('coluna'),$('#input_jogada').val(),$('#btn_numero').data('tipo_jogada'))){
+                        $('#modal_numero').modal('hide');
+                        $('#input_jogada').val('');
+                    }
+                }
+        
+            });
+
+            // FECHAMENTO DO MODAL DE INSERIR OU DELETAR NUMERO
+            $('#modal_numero').on('hidden.bs.modal',function(){
+                $('#input_jogada').val('');
+                $('#input_jogada').prop('disabled',false);
+            });
+
+            // APÓS JOGO FINALIZADO, CLIQUE NO BOTÃO PARA VOLTAR AO INICIO
+            $('#btn_voltar').off('click').on('click',function(){
+                retornar_inicio('index_sudoku.html');
+            }); 
+
+        });
+    </script>
+</body>
+</html>
