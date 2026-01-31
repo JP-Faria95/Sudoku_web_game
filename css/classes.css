@@ -178,7 +178,7 @@ html,body{
 }
 
 .pagina_inicial{
-    background-image: url('fundo2.jpg');
+    background-image: url('imagens/fundo2.jpg');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
