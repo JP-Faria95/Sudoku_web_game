@@ -34,7 +34,7 @@
 
     <!-- MODAL PARA O JOGADOR INSERIR O NUMERO -->
     <div class="modal fade" tabindex="-1" id="modal_numero">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title"></h3>
@@ -46,15 +46,16 @@
                     <input type="text" class="input_jogada" id="input_jogada">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success btn-sm" id="btn_numero">Inserir</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn_rascunho">Rascunho</button>
+                    <button type="button" class="btn btn-sm" id="btn_numero" style="font-size: 14px!important;width: 80px!important">Inserir</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- INCLUDES DOS ARQUIVOS DE FUNCOES -->
-    <script src="js/sudoku.js"></script>
-    <script src="js/funcoes_sudoku.js"></script>
+    <script src="sudoku.js"></script>
+    <script src="funcoes_sudoku.js"></script>
     <script>
         $(document).ready(function(){
 
@@ -86,24 +87,30 @@
                 }
                 let linha = $(this).data('linha');
                 let coluna = $(this).data('coluna');
-                let numero = $(this).text() ? $(this).text() : 0;
+                let numero = celula_jogada(linha,coluna);
                 $('#btn_numero').data('linha',linha);
                 $('#btn_numero').data('coluna',coluna);
-                $('#btn_numero').data('numero',numero);
-                console.log('Linha clidado: ', linha);
-                console.log('Coluna clidado: ', coluna);
-                console.log('Número clidado: ', numero);
+                $('#btn_rascunho').data('linha',linha);
+                $('#btn_rascunho').data('coluna',coluna);
                 $('#modal_numero').modal('show');
                 if(numero == 0){
+                    $('#modal_numero').find('.modal-content').css('width','239px');
                     $('.modal-title').text('Inserir Número');
                     $('#btn_numero').text('Inserir');
+                    $('#btn_numero').removeClass('btn-danger');
+                    $('#btn_numero').addClass('btn-success');
+                    $('#btn_rascunho').show();
                     $('#btn_numero').data('tipo_jogada','inserir');
                     $('#input_jogada').val('');
                     $('#input_jogada').prop('disabled',false);
                 }
                 else{
+                    $('#modal_numero').find('.modal-content').css('width','239px');
                     $('.modal-title').text('Deletar Número');
                     $('#btn_numero').text('Deletar');
+                    $('#btn_numero').removeClass('btn-success');
+                    $('#btn_numero').addClass('btn-danger');
+                    $('#btn_rascunho').hide();
                     $('#btn_numero').data('tipo_jogada','deletar');
                     $('#input_jogada').val(numero);
                     $('#input_jogada').prop('disabled',true);
@@ -138,24 +145,61 @@
                     }
                 }
 
-                else if($('#btn_numero').data('tipo_jogada') == 'deletar'){
+                else if($('#btn_numero').data('tipo_jogada') == 'deletar' || $('#btn_numero').data('tipo_jogada') == 'rascunho_deletar'){
                     if(jogada($('#btn_numero').data('linha'),$('#btn_numero').data('coluna'),$('#input_jogada').val(),$('#btn_numero').data('tipo_jogada'))){
                         $('#modal_numero').modal('hide');
                         $('#input_jogada').val('');
                     }
                 }
-        
+
+            });
+
+            // INSERIR NÚMERO COMO RASCUNHO
+            $('#modal_numero').off('click','#btn_rascunho').on('click','#btn_rascunho',function(){
+                $('#btn_rascunho').data('tipo_jogada','rascunho');
+                if($('#input_jogada').val() > 9 || $('#input_jogada').val() < 1){
+                    $.notify("Somente números de 1 a 9 são aceitos","error");
+                    return false;
+                }
+
+                else{
+                    if(jogada($('#btn_rascunho').data('linha'),$('#btn_rascunho').data('coluna'),$('#input_jogada').val(),$('#btn_rascunho').data('tipo_jogada'))){
+                        $('#modal_numero').modal('hide');
+                        $('#input_jogada').val('');
+                    }
+                }
+            });
+
+            // EXCLUIR UM RASCUNHO QUANDO CLICA NELE
+            $(document).off('click','.celula_rascunho span').on('click','.celula_rascunho span',function(e){
+                e.stopPropagation();
+                let span = $(this);
+                let numero = $(this).data('numero');
+                let linha = $(this).closest('.celula').data('linha');
+                let coluna = $(this).closest('.celula').data('coluna');
+                $('#modal_numero').modal('show');
+                $('#modal_numero').find('.modal-content').css('width','265px');
+                $('.modal-title').text('Apagar Rascunho');
+                $('#input_jogada').val(numero);
+                $('#input_jogada').prop('disabled',true);
+                $('#btn_rascunho').hide();
+                $('#btn_numero').addClass('btn-danger').text('Deletar');
+                $('#btn_numero').data('tipo_jogada','rascunho_deletar');
+                $('#btn_numero').data('linha',linha);
+                $('#btn_numero').data('coluna',coluna); 
             });
 
             // FECHAMENTO DO MODAL DE INSERIR OU DELETAR NUMERO
             $('#modal_numero').on('hidden.bs.modal',function(){
                 $('#input_jogada').val('');
                 $('#input_jogada').prop('disabled',false);
+                $('#btn_rascunho').show();
+                $('#btn_numero').addClass('btn-success').text('TESTE');
             });
 
             // APÓS JOGO FINALIZADO, CLIQUE NO BOTÃO PARA VOLTAR AO INICIO
             $('#btn_voltar').off('click').on('click',function(){
-                retornar_inicio('index.html');
+                retornar_inicio('index_sudoku.html');
             }); 
 
         });

@@ -119,15 +119,21 @@ function desenhar_tabuleiro(tabuleiro){
 
 // 4) FUNÇÃO QUE FAZ A LEITURA DO INDICE CLICADO PELO JOGADOR E VALIDA O NUMERO INSERIDO
 function jogada(linha,coluna,numero,tipo_jogada){
+    console.log("Chamou a jogada");
+    console.log(linha);
+    console.log(coluna);
+    console.log(tipo_jogada);
+    console.log(numero);
     let resultado;
+    
     if(tipo_jogada == 'inserir'){
         resultado = inserir(linha,coluna,numero);
         if(resultado == 1){
-            atualizar_celula(linha,coluna);
+            atualizar_celula(linha,coluna,tipo_jogada);
             return true;
         }
         else{
-            $.notify("O número informado não é válido na posição escolhida","error");
+            $.notify("O número não é válido na posição escolhida","error");
             return false;
         }
     }
@@ -143,21 +149,71 @@ function jogada(linha,coluna,numero,tipo_jogada){
             return false;
         }
     }
+
+    else if(tipo_jogada == 'rascunho'){
+        resultado = inserir(linha,coluna,numero);
+        if(resultado == 1){
+            apagar(linha,coluna);
+            atualizar_celula(linha,coluna,tipo_jogada,numero);
+            return true;
+        }
+        else{
+            $.notify("Rascunho não é válido para a posição escolhida","error");
+            return false;
+        }
+    }
+
+    else if(tipo_jogada == 'rascunho_deletar'){
+        atualizar_celula(linha,coluna,tipo_jogada,numero);
+        return true;
+    }
 }
 
 // 5) FUNÇÃO QUE ATUALIZA VISUALMENTE A CÉLULA APÓS INSERIR UM NÚMERO
-function atualizar_celula(linha,coluna){
-    let numero = celula_jogada(linha,coluna);
+function atualizar_celula(linha,coluna,tipo_jogada='',numero_rascunho=null){
+    console.log("Chamou a atualizar");
+    console.log(linha);
+    console.log(coluna);
+    console.log(tipo_jogada);
+    console.log(numero_rascunho);
+    let numero_celula = celula_jogada(linha,coluna);
     let celula = $(`.celula[data-linha=${linha}][data-coluna=${coluna}]`);
-    if(numero != 0){
-        celula.text(numero).addClass('celula_jogador');
+
+    if(numero_celula != 0 && tipo_jogada == 'inserir'){
+        celula.text(numero_celula).addClass('celula_jogador').removeClass('celula_rascunho');
     }
+
+    else if(tipo_jogada == 'rascunho' || tipo_jogada == 'rascunho_deletar'){
+        console.log("estamos aqui??");
+        let container = celula.find('.celula_rascunho');
+
+        if(tipo_jogada == 'rascunho_deletar'){
+            console.log("aqui para deletar");
+            if(container.length){
+                container.find(`span[data-numero="${numero_rascunho}"]`).remove();
+                if(container.find('span').length == 0){
+                    celula.empty().removeClass('celula_rascunho').addClass('celula_jogador');
+                }
+            }
+            return;
+        }
+        
+        if(container.length == 0){
+            celula.empty();
+            container = $('<div class="celula_rascunho"></div>');
+            celula.append(container);
+        }
+        if(container.find(`span[data-numero="${numero_rascunho}"]`).length == 0){
+            container.append(`<span data-numero="${numero_rascunho}">${numero_rascunho}</span>`);
+        }
+    }
+
     else{
-        celula.text('').addClass('celula_jogador');
+        celula.text('').addClass('celula_jogador').removeClass('celula_rascunho');
     }
+
     $('#modal_insere_numero').modal('hide');
     $('#input_jogada').val('');
-
 }
 
 // 6) VERIFICA SE O TABULEIRO FOI COMPLETADO
@@ -173,4 +229,17 @@ function verificar_fim_jogo(){
 // 7) RETORNA AO INICIO DA PÁGINA
 function retornar_inicio(url_pagina){
     window.location.href = url_pagina;
+}
+
+// 8) CRIA UM NUMERO RASCUNHO NA CELULA
+function jogada_rascunho(linha,coluna,numero){
+    let resultado = inserir(linha,coluna,numero);
+    if(resultado == 1){
+        atualizar_celula(linha,coluna);
+        return true;
+    }
+    else{
+        $.notify("O número informado não é válido na posição escolhida","error");
+        return false;
+    }
 }
